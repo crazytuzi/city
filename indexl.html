@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="css/filter.css">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+   body{
+   	background: #F4F4F4;
+   }
+    #allmap
+    {
+        width:100%;
+        height:100%;
+        float:left;
+        overflow: hidden;
+        /*left: 15%;*/
+    }
+    .BMap_cpyCtrl {  
+        display: none;  
+    }  
+    .anchorBL {  
+        display: none;  
+    }
+    .anchorTR {
+        display: none;
+    }
+    .leaflet-popup-content ul { padding-left: 1.5em; }
+
+      .circle { visibility: hidden; }
+      .circle.selected { visibility: visible; }
+
+      svg {
+        font: 10px sans-serif;
+      }
+
+      .axis path, .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+      }
+      
+      #allmap path{
+      	fill-opacity: 0;
+      }
+      #map{
+      	background: #F4F4F4;
+      }
+      /*.display {
+            display: block;
+      }*/
+       #fscale-chart{
+        display: inline-block;
+        margin-left: -180px;
+      }
+      #width-chart{
+        display: inline-block;
+        margin-left: 90px;
+        width: 16
+      }
+      #length-chart{
+        display: inline-block;
+        margin-left: 20px;
+      }
+      #leftText{
+        display: inline-block;
+        /*margin-top: -190px;*/
+      }
+      #start{
+        margin-top: 170px;
+        margin-left: 60px;
+      }
+      #end{
+        display: inline-block;
+      }
+    </style>
+    
+	<script src="js/jquery-1.8.3.min.js"></script>
+	<script src="js/distpicker.data.js"></script>
+	<script src="js/distpicker.js"></script>
+	<script src="js/main.js"></script>
+    <script type="text/javascript" src="js/d3.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=NmMSjG5Zar0nfp5TGG9DCTSOLQ0ATmSH"></script>
+    <script type="text/javascript" src="js/mapv.js"></script>
+    <title>地图展示</title>
+</head>
+<body>
+    <div id="charts">
+        <div id="map" class="display">
+        	<div id="allmap"></div>
+        </div>
+
+        <div id="fscale-chart" class="bChart display">
+            <div class="title">上网时长</div>
+        </div>
+
+        <div id="length-chart" class="bChart display">
+            <div class="title">上网日期</div>
+        </div>
+<!--
+        <div id="inj-chart" class="bChart display">
+            <div class="title">Injuries</div>
+        </div> -->
+
+        <div id="length-chart" class="bChart display">
+            <div class="title">出生年</div>
+        </div>
+
+        <span class='textBlock' id='leftText'>
+            <div class='stat' id='num'></div>
+        </br>
+            上网记录
+        </br>
+            <div class='stat' id='miles'></div>
+        </br>
+            网吧 
+        </br>
+            <div class='stat' id='inj'></div>
+        </br>
+            流动人口比例
+        </br>
+            <div class='stat' id='inj'></div>
+        </br>
+            男女比例
+        </span>
+
+        <div class="cChart display" id="start">
+            <div class="title">上网开始时间</div>
+        </div>
+
+        <div class="cChart display" id="end">
+            <div class="title">上网结束时间</div>
+        </div>
+
+        <span class='textBlock' id='rightText'>
+            <!--
+        <div id='faq' class='title'>FAQ</div>
+            Each line represents a single tornado. Only tornadoes that traveled more than 20 miles are drawn on the map (~2000!).
+        <div class='lineBreak'></div>
+            Line length and width are proportional to the tornado's; opacity and color to wind speed.
+        <div class='lineBreak'></div>
+            <a class= "blacklink" href="http://www.spc.noaa.gov/wcm/">NOAA</a> 
+            only collects start and end locations - tornadoes do not actually travel in perfectly straight lines. 
+        <div class='lineBreak'></div>
+            Questions? Comments? 
+            <a class= "blacklink" href="mailto:adam.r.pearce@gmail.com">adam.r.pearce@gmail.com</a>
+            </br> 
+            <a class= "blacklink" href="https://twitter.com/adamrpearce">@adamrpearce</a>
+        -->
+    </div>
+
+</body>
+<script type="text/javascript">
+    // 百度地图API功能
+    var map = new BMap.Map("allmap",{enableMapClick:false,minZoom:8,maxZoom:18});    // 创建Map 实例构造底图时，关闭底图可点功能
+    //map.centerAndZoom(new BMap.Point(106.51, 29.55), 8);  // 初始化地图,设置中心点坐标和地图级别
+    map.centerAndZoom(new BMap.Point(107.51, 30.00), 8);
+    //map.centerAndZoom("重庆",8);      // 初始化地图,用城市名设置地图中心点
+    map.setMapStyle({        
+        styleJson: [
+        {   
+            "featureType": "all",            
+            "elementType": "all",            
+            "stylers": {
+                "lightness": 10,
+                "saturation": -100 
+            }
+        },
+        {            
+            "featureType": "highway",            
+            "elementType": "all",            
+            "stylers": {                
+                "visibility": "off",
+            }
+        },
+        {
+            "featureType": "districtlabel",
+            "elementType": "labels.text.fill",
+            "stylers": {
+               "visibility": "on",
+            }
+          }]    
+    });
+
+
+    //添加地图类型控件
+    map.addControl(new BMap.MapTypeControl({
+        mapTypes:[
+            BMAP_NORMAL_MAP
+        ]}));  
+    //map.clearHotspots();
+    
+    
+    //具体要求设置   
+    //var map = new BMap.Map("allmap",{minZoom:4,maxZoom:8}); // 创建Map实例,设置地图允许的最小/大级别
+    map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+    /*
+    var point = new BMap.Point(106.51, 29.55);     
+    var marker = new BMap.Marker(point);        // 创建标注    
+    map.addOverlay(marker);                     // 将标注添加到地图中
+    */
+
+   function circle(d){
+    	var points=[];//添加海量点数据
+		for (var i = 0; i < d.length; i++) {
+		    points.push(new BMap.Point(d[i]['lng'], d[i]['lat']));
+		    points[i].id=d[i]['SITEID'];
+		    points[i].name=d[i]['TITLE'];
+		}
+		var options = {
+		    size: BMAP_POINT_SIZE_SMALL,
+		    shape: BMAP_POINT_SHAPE_STAR,
+		    color: '#d340c3'
+		}
+		var pointCollection = new BMap.PointCollection(points, options);//初始化PointCollection
+		        /*
+		         pointCollection.addEventListener('click', function (e) {
+		          alert('单击点的坐标为：' + e.point.id + ',' + e.point.name);  // 监听点击事件
+		        });
+		        */
+		map.addOverlay(pointCollection);// 添加Overlay
+    }
+   
+    getBoundary("重庆市");
+    function getBoundary(getcity){
+		var bdary = new BMap.Boundary();
+		bdary.get(getcity, function(rs){       //获取行政区域		
+			map.clearOverlays();        //清除地图覆盖物
+			var count = rs.boundaries.length; //行政区域的点有多少个
+			if (count === 0) {
+				alert('未能获取当前输入行政区域');
+				return ;
+			}
+			var pointArray = [];
+			for (var i = 0; i < count; i++) {
+				var ply = new BMap.Polygon(rs.boundaries[i], {strokeWeight: 2, strokeColor: "#ff0000", strokeOpacity:"0.2"}); //建立多边形覆盖物
+	//			console.log(rs.boundaries[i]);
+				map.addOverlay(ply);  //添加覆盖物
+				pointArray = pointArray.concat(ply.getPath());
+			}
+			map.setViewport(pointArray);    //调整视野
+		//获取网吧信息
+//		    d3.csv("csv/netbars.csv",function(error,barinfo){
+//		        if (error) {
+//		            console.error(error);
+//		        }
+//				circle(barinfo);
+//		    });
+		});
+}
+    
+ 
+</script>
+</html>
+
+<script type="text/javascript" src="js/crossfilter.js"></script>
+<script type="text/javascript" src="js/queue.js"></script>
+<script type="text/javascript" src="js/barChart.js"></script>
+<script type="text/javascript" src="js/circleChart.js"></script>
+<script type="text/javascript" src="js/drawMap1.js"></script>

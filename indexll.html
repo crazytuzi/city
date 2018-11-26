@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+	<head>
+    <link rel="stylesheet" type="text/css" href="css/filter.css">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+    .properties_name_text{
+				font-size: 2;
+				font-family:monaco;
+				fill:black;
+			}
+			.location circle{
+				fill:#3FF027;
+			}
+			.locationEmpty{
+				fill:#00E3FF;
+			}
+			.cpcircle{
+				fill:green;
+				opacity:0.5;
+			}
+			.barcircle{
+				fill:red;
+				opacity:1;
+			}
+   body{
+   	background: #F4F4F4;
+   }
+    #allmap
+    {
+        width:100%;
+        height:100%;
+        float:left;
+        overflow: hidden;
+        /*left: 15%;*/
+    }
+    .BMap_cpyCtrl {  
+        display: none;  
+    }  
+    .anchorBL {  
+        display: none;  
+    }
+    .anchorTR {
+        display: none;
+    }
+    .leaflet-popup-content ul { padding-left: 1.5em; }
+
+      .circle { visibility: hidden; }
+      .circle.selected { visibility: visible; }
+
+      svg {
+        font: 10px sans-serif;
+      }
+
+      .axis path, .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+      }
+      
+      #allmap path{
+      	fill-opacity: 0;
+      }
+      #map{
+      	background: #F4F4F4;
+      }
+    </style>
+    
+	<script src="js/jquery-1.8.3.min.js"></script>
+	<script src="js/distpicker.data.js"></script>
+	<script src="js/distpicker.js"></script>
+	<script src="js/main.js"></script>
+    <script type="text/javascript" src="js/d3.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=NmMSjG5Zar0nfp5TGG9DCTSOLQ0ATmSH"></script>
+    <title>地图展示</title>
+</head>
+	<body>
+		<div id="charts">
+        <div id="map" class="display">
+        	<!-- <svg id="allmap"></svg> -->
+        </div>
+
+        <div id="fscale-chart" class="bChart display">
+            <div class="title">上网时长</div>
+        </div>
+
+        <div id="length-chart" class="bChart display">
+            <div class="title">上网日期</div>
+        </div>
+<!--        <div id="length-chart" class="bChart display">
+            <div class="title">上网次数</div>
+        </div>
+
+        <div id="inj-chart" class="bChart display">
+            <div class="title">Injuries</div>
+        </div> -->
+
+        <div id="year-chart" class="bChart display">
+            <div class="title">出生年</div>
+        </div>
+
+        <span class='textBlock' id='leftText'>
+            <div class='stat' id='num'></div>
+        </br>
+            上网记录
+        </br>
+            <div class='stat' id='miles'></div><!--
+        </br>
+            网吧 
+        </br>
+            <div class='stat' id='inj'></div>-->
+        </br>
+            流动人口比例
+        </br>
+            <div class='stat' id='inj'></div>
+        </br>
+            男女比例
+        </span>
+
+        <div class="cChart display">
+            <div class="title">上网开始时间</div>
+        </div>
+
+        <div class="cChart display">
+            <div class="title">上网结束时间</div>
+        </div>
+<!--
+        <div class="cChart display">
+            <div class="title">流动人口比例</div>
+        </div> -->
+
+        <span class='textBlock' id='rightText'>
+            <!--
+        <div id='faq' class='title'>FAQ</div>
+            Each line represents a single tornado. Only tornadoes that traveled more than 20 miles are drawn on the map (~2000!).
+        <div class='lineBreak'></div>
+            Line length and width are proportional to the tornado's; opacity and color to wind speed.
+        <div class='lineBreak'></div>
+            <a class= "blacklink" href="http://www.spc.noaa.gov/wcm/">NOAA</a> 
+            only collects start and end locations - tornadoes do not actually travel in perfectly straight lines. 
+        <div class='lineBreak'></div>
+            Questions? Comments? 
+            <a class= "blacklink" href="mailto:adam.r.pearce@gmail.com">adam.r.pearce@gmail.com</a>
+            </br> 
+            <a class= "blacklink" href="https://twitter.com/adamrpearce">@adamrpearce</a>
+        -->
+    </div>
+		<script>
+			/*
+			var opacity = 0.8;
+			var width  = 800;
+			var height = 800;
+			
+			
+			var svg = d3.select("#map").append("svg")
+			    .attr("width", width)
+			    .attr("height", height)
+			    .attr("transform", "translate(0,0)")
+			    .attr("id","allmap");
+
+			//设置缩放
+			var zoom = d3.behavior.zoom()
+					.scaleExtent([1, 10])
+					.on("zoom", zoomed);
+			
+			
+			//设置地理投影
+			var projection = d3.geo.mercator()
+								.center([106, 29])
+								.scale(8000)
+		    					.translate([150, 550]);
+			
+			//创建一个新的地理路径生成器
+			var path = d3.geo.path()
+							.projection(projection);
+			
+			
+			//获取颜色
+			var color = d3.scale.category20();
+
+			function zoomed() {
+			d3.select(this).attr("transform", 
+				"translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+		}*/
+			/*
+			var zoom = d3.behavior.zoom()
+    .on("zoom",function() {
+        g.attr("transform","translate("+d3.event.translate.join(",")+")scale("+d3.event.scale+")");
+
+        g.selectAll(".mapmarker")  
+        .attr("r",6/d3.event.scale)
+        .attr("stroke-width",1/d3.event.scale);
+
+});*//*
+			
+			//制作地图
+			d3.json("csv/chongqing.json", function(error, root) {
+				
+				if (error){ 
+					return console.error(error);
+				}
+				//console.log(root.features);
+				var groups = svg.append("g").call(zoom);
+				var map = groups.selectAll("path")
+					.data( root.features )
+					.enter()
+					.append("path")
+					.attr("stroke","#000")
+					.attr("stroke-width",1)
+					.style("fill", function(d,i){
+						return color(i);
+					})
+					.style("opacity",opacity/2)
+					.attr("d", path );
+
+				//为省份添加中心点
+				var svg_cp = groups.selectAll(".cpcircle")
+								   .data(root.features)
+								   .enter()
+								   .append("circle")
+								   .attr("transform",function(d,i){
+								   		var coor = projection(d.properties.cp);
+										//console.log(coor);	
+										return "translate("+coor[0]+","+coor[1]+")";
+								   })
+								   .attr("class","cpcircle")
+								   .attr("r",3);
+
+				//为各省份添加名称
+		        var svg_text = groups.selectAll(".properties_name_text")
+		        			   .data(root.features)
+		        			   .enter()
+		        			   .append("text")
+		        			   .attr("transform",function(d,i){
+		        			   	    var coor = projection(d.properties.cp);
+									//console.log(coor);	
+									return "translate("+coor[0]+","+coor[1]+")";
+								})
+		        			   .attr("class","properties_name_text")
+		        			   .style("font-size",12)
+		        			   .text(function(d){
+		        			   	return d.properties.name;
+		        			   });
+
+
+				//读取csv:*/
+				/*
+				d3.csv("csv/netbars.csv",function(error,bars){
+					if(error){
+						return console.log(error);
+					}
+
+					//console.log(bars);
+
+					var svg_bars = groups.selectAll(".points").append("g");
+				    var barcircle = svg_bars.data(bars)
+							.enter()
+							.append("circle")
+							.attr("transform",function(d,i){
+							  	var arr = [];
+							  	arr.push(d.lng);
+								arr.push(d.lat);
+								var coor = projection(arr);	
+								//console.log(coor);
+								return "translate("+coor[0]+","+coor[1]+")";				    	
+							})
+							.attr("class","barcircle")
+							.attr("r",2);
+
+				});*//*
+
+			});*/
+		        					
+		</script>					
+		
+	</body>
+</html>
+
+<script type="text/javascript" src="js/crossfilter.js"></script>
+<script type="text/javascript" src="js/queue.js"></script>
+<script type="text/javascript" src="js/barChart.js"></script>
+<script type="text/javascript" src="js/circleChart.js"></script>
+<script type="text/javascript" src="js/drawMap.js"></script>
